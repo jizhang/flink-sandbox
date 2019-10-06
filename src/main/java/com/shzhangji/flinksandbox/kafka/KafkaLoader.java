@@ -1,6 +1,5 @@
 package com.shzhangji.flinksandbox.kafka;
 
-import java.util.Properties;
 import org.apache.flink.api.common.serialization.SimpleStringEncoder;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.core.fs.Path;
@@ -13,7 +12,9 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.filesystem.RollingPolicy;
 import org.apache.flink.streaming.api.functions.sink.filesystem.StreamingFileSink;
 import org.apache.flink.streaming.api.functions.sink.filesystem.rollingpolicies.DefaultRollingPolicy;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
+
+import java.util.Properties;
 
 public class KafkaLoader {
   public static void main(String[] args) throws Exception {
@@ -29,7 +30,7 @@ public class KafkaLoader {
     // source
     Properties props = new Properties();
     props.setProperty("bootstrap.servers", "localhost:9092");
-    FlinkKafkaConsumer010<String> consumer = new FlinkKafkaConsumer010<>(
+    FlinkKafkaConsumer<String> consumer = new FlinkKafkaConsumer<>(
         "flink_test", new SimpleStringSchema(), props);
     DataStream<String> stream = env.addSource(consumer);
 
