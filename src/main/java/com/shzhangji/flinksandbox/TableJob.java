@@ -16,7 +16,8 @@ public class TableJob {
     TableEnvironment tableEnv = TableEnvironment.create(settings);
 
     String path = System.getProperty("user.dir") + "/data/wordcount.txt";
-    tableEnv.executeSql("CREATE TABLE wordcount (\n" +
+    tableEnv.executeSql(
+      "CREATE TABLE wordcount (\n" +
       "  line STRING\n" +
       ")\n" +
       "WITH (\n" +
@@ -25,7 +26,8 @@ public class TableJob {
       "  ,'format' = 'csv'\n" +
       ")");
 
-    tableEnv.executeSql("CREATE TABLE wordcount_result (\n" +
+    tableEnv.executeSql(
+      "CREATE TABLE wordcount_result (\n" +
       "  word STRING\n" +
       "  ,cnt BIGINT\n" +
       ") WITH ('connector' = 'print')");
