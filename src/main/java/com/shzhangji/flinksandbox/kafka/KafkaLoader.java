@@ -3,7 +3,6 @@ package com.shzhangji.flinksandbox.kafka;
 import org.apache.flink.api.common.serialization.SimpleStringEncoder;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.core.fs.Path;
-import org.apache.flink.runtime.state.StateBackend;
 import org.apache.flink.runtime.state.filesystem.FsStateBackend;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.CheckpointConfig;
@@ -23,7 +22,7 @@ public class KafkaLoader {
 
     // checkpoint
     env.enableCheckpointing(10_000);
-    env.setStateBackend((StateBackend) new FsStateBackend("file:///tmp/flink/checkpoints"));
+    env.setStateBackend(new FsStateBackend("file:///tmp/flink/checkpoints"));
     CheckpointConfig config = env.getCheckpointConfig();
     config.enableExternalizedCheckpoints(ExternalizedCheckpointCleanup.DELETE_ON_CANCELLATION);
 
@@ -35,9 +34,10 @@ public class KafkaLoader {
     DataStream<String> stream = env.addSource(consumer);
 
     // sink
-    RollingPolicy<String, String> rollingPolicy = DefaultRollingPolicy.create()
-        .withRolloverInterval(15_000)
-        .build();
+    RollingPolicy<String, String> rollingPolicy = DefaultRollingPolicy.builder()
+      .withRolloverInterval(15_000)
+      .build();
+
     StreamingFileSink<String> sink = StreamingFileSink
         .forRowFormat(new Path("file:///tmp/kafka-loader"), new SimpleStringEncoder<String>())
         .withBucketAssigner(new EventTimeBucketAssigner())
